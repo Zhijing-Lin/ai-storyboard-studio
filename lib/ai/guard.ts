@@ -4,10 +4,10 @@ import { LIMITS, RATE_LIMITS } from "./config";
 /**
  * Basic abuse & cost protection for the paid AI routes.
  *
- * This is suitable for local development and course demos. It is NOT a
- * substitute for authentication: in-memory counters reset on restart and are
- * not shared between serverless instances. Public deployments are therefore
- * blocked unless ALLOW_PUBLIC_AI_ENDPOINTS=true is set deliberately.
+ * The routes are intentionally public (the owner pays for usage). These checks
+ * limit abuse but are NOT authentication: in-memory counters reset on restart
+ * and are not shared between serverless instances. Set a monthly budget limit
+ * in the OpenAI dashboard as the hard spending cap.
  */
 
 export function jsonError(status: number, error: string, headers?: Record<string, string>) {
@@ -16,13 +16,6 @@ export function jsonError(status: number, error: string, headers?: Record<string
 
 /** Checks that run before the request body is read. Returns an error Response or null. */
 export function preflight(request: Request): Response | null {
-  if (process.env.VERCEL && process.env.ALLOW_PUBLIC_AI_ENDPOINTS !== "true") {
-    return jsonError(
-      403,
-      "AI generation is disabled on this deployment. Add authentication and set ALLOW_PUBLIC_AI_ENDPOINTS=true before exposing paid endpoints publicly.",
-    );
-  }
-
   if (!process.env.OPENAI_API_KEY?.trim()) {
     return jsonError(
       500,

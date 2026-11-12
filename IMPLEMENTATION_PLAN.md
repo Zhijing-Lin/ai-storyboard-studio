@@ -50,4 +50,4 @@ Browser (`lib/storyboard/aiClient.ts`) → Route Handlers (`app/api/ai/outline`,
 - Mock mode is kept for offline testing at `/?mock=1` and is labeled as mock everywhere. Real mode never falls back to mock.
 
 ## Safeguards (not production auth)
-In-memory rate limits reset on restart and are per-instance. AI routes refuse to run on Vercel unless `ALLOW_PUBLIC_AI_ENDPOINTS=true`; add authentication before enabling.
+The AI routes are intentionally public (no login); the owner pays for usage. In-memory rate limits reset on restart and are per-instance, so the OpenAI dashboard budget limit is the hard spending cap.
